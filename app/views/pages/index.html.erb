@@ -1,0 +1,37 @@
+<div class="container center-align" style="margin-top: 50px; margin-bottom: 50px;">
+  <div>
+    <h1 class="blue-text text-darken-2">Tic Tac Toe!</h1>
+    <p class="flow-text grey-text text-darken-1">The classic game reimagined for endless fun.</p>
+  </div>
+  <div class="section">
+    <div class="card hoverable" style="width: 100%; height: 400px;">
+      <div class="card-image" style="height: 100%;">
+        <img src="https://cdn02.pinkoi.com/product/pXk5zhua/1/640x530.jpg" alt="Tic Tac Toe Game Preview" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <%# <a class="btn waves-effect waves-light blue darken-2">Start New Game</a> %>
+    <%= link_to 'Start Game', game_path, class: 'btn waves-effect waves-light blue darken-2' %>
+    <!-- Modal Trigger -->
+    <a class="waves-effect waves-light btn modal-trigger" href="#modelHowToPlay">How to Play</a>
+    <!-- Modal Structure -->
+    <div id="modelHowToPlay" class="modal">
+      <div class="modal-content">
+        <%= render 'partials/game_rules'%>
+      </div>
+      <div class="modal-footer">
+        <a class="modal-close waves-effect waves-green btn-flat">I UNDERSTOOD</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- JavaScript to initialize the modal -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var modals = document.querySelectorAll('.modal');
+    M.Modal.init(modals);
+  });
+</script>
+<%# <%= render 'partials/about_us'%>
+<%= render 'partials/footer'%>
