@@ -1,0 +1,123 @@
+<div style="height: 100vh; display: flex; align-items: center; justify-content: center;">
+  <div class="card z-depth-4" style="padding: 30px; max-width: 450px; width: 100%; text-align: center; border-radius: 16px; box-shadow: 0 0 25px rgba(0, 150, 136, 0.7);">
+    <div class="center-align" style="margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 15px;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg"
+       alt="Pakistani Flag"
+       width="50"
+       style="border: 1px solid #ccc; border-radius: 4px;" />
+      <h5 class="teal-text text-darken-3" style="margin: 0;">PAF vs IAF.....6-Nil 😎</h5>
+    </div>
+    <h4 class="teal-text text-darken-3">Tic Tac Toe</h4>
+    <% if session[:game_over] %>
+      <div class="card-panel teal lighten-2 white-text" style="padding: 20px; border-radius: 12px;">
+        <% if @message.present? %>
+          <p class="flow-text" style="margin: 0;">
+            <strong><%= @message %></strong>
+          </p>
+        <% else %>
+          <p class="flow-text" style="margin: 0;">
+            <strong>Game Over!</strong>
+          </p>
+        <% end %>
+        <div class="section" style="margin-top: 10px;">
+          <%= button_to '🔄 Play Again', reset_game_path,
+                method: :post,
+                class: 'btn white teal-text text-darken-3 waves-effect z-depth-1',
+                form: { style: 'display: inline' },
+                style: 'border: 2px solid white; border-radius: 8px;' %>
+        </div>
+        <% if @message != "It's a tie!"%>
+          <button onclick="document.getElementById('my-audio').play()" class="btn green lighten-2 white-text" style="display: none;">
+            📢 Listen PAK Victory? Click me!
+          </button>
+        <% end %>
+        <!-- Game Over Sound -->
+        <%# <audio controls>
+          <source src="/audio/game_over3_trimmed.mp3" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio> %>
+        <script>
+          document.getElementById('my-audio').play()
+        </script>
+        <audio id="my-audio" src="/audio/game_over_115s.mp3" style="display: none;"></audio>
+      </div>
+    <% else %>
+      <p class="flow-text"><strong>Player <%= @current_player %>'s turn</strong></p>
+    <% end %>
+    <%= form_with url: game_move_path, method: :post, local: true do %>
+      <div class="row">
+        <% @board.each_slice(3).with_index do |row, row_idx| %>
+          <div class="col s12">
+            <% row.each_with_index do |cell, col_idx| %>
+              <% index = row_idx * 3 + col_idx %>
+              <% if cell.present? || session[:game_over] %>
+                <button class="btn-large grey lighten-3 black-text z-depth-1" disabled style="width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;">
+                  <%= cell %>
+                </button>
+              <% else %>
+                <button type="submit" name="cell" value="<%= index %>" class="btn-large teal white-text z-depth-3" style="width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;">
+                  &nbsp;
+                </button>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    <div class="section" style="margin-top: 20px;">
+      <%= button_to '🧹 Reset Game', reset_game_path,
+                method: :post,
+                class: 'btn-flat red-text text-darken-2 waves-effect',
+                form: { style: 'display: inline' },
+                style: 'border: 2px solid #ef5350; border-radius: 8px;' %>
+    </div>
+  </div>
+  <!-- Background animation layer -->
+  <div id="xo-background">
+    <% 50.times do %>
+      <% char = ['X', 'O', '💥', '🛦', '💥🚀'].sample %>
+      <% top = rand %>
+      <% left = rand %>
+      <% delay = rand %>
+      <% size = [12, 14, 16, 18, 20].sample %>
+      <span class="xo" style="
+      --rand-top: <%= top %>;
+      --rand-left: <%= left %>;
+      --rand-delay: <%= delay %>;
+      font-size: <%= size %>px;
+    "><%= char %></span>
+    <% end %>
+  </div>
+  <style>
+    #xo-background {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #xo-background .xo {
+      position: absolute;
+      font-weight: bold;
+      color: rgba(0, 0, 0, 0.2);
+      top: calc(100% * var(--rand-top));
+      left: calc(100% * var(--rand-left));
+      animation: floatXO 25s linear infinite;
+      animation-delay: calc(-25s * var(--rand-delay));
+    }
+
+    @keyframes floatXO {
+      0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-120vh) scale(1.2) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</div>
