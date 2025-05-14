@@ -7,24 +7,30 @@
        style="border: 1px solid #ccc; border-radius: 4px;" />
       <h5 class="teal-text text-darken-3" style="margin: 0;">PAF vs IAF.....6-Nil 😎</h5>
     </div>
-    <h4 class="teal-text text-darken-3">Tic Tac Toe</h4>
+    <%# <h5 class="teal-text text-darken-3">Tic Tac Toe</h5> %>
     <% if session[:game_over] %>
-      <div class="card-panel teal lighten-2 white-text" style="padding: 20px; border-radius: 12px;">
+      <div class="card-panel teal lighten-2 white-text" style="padding: 5px; border-radius: 12px;">
         <% if @message.present? %>
           <p class="flow-text" style="margin: 0;">
             <strong><%= @message %></strong>
           </p>
-        <% else %>
-          <p class="flow-text" style="margin: 0;">
-            <strong>Game Over!</strong>
-          </p>
         <% end %>
+        <%# <% else %>
+        <p class="flow-text" style="margin: 0;">
+          <strong>Game Over!</strong>
+        </p>
         <div class="section" style="margin-top: 10px;">
-          <%= button_to '🔄 Play Again', reset_game_path,
+          <div style="display: flex; justify-content: center;">
+            <div class="center-align">
+              <%= button_to reset_game_path,
                 method: :post,
                 class: 'btn white teal-text text-darken-3 waves-effect z-depth-1',
                 form: { style: 'display: inline' },
-                style: 'border: 2px solid white; border-radius: 8px;' %>
+                style: 'border: 2px solid white; border-radius: 12px; padding: 10px 20px; font-weight: normal; display: flex; align-items: center; justify-content: center;' do %>
+                ▷&nbsp;Play Again
+              <% end %>
+            </div>
+          </div>
         </div>
         <% if @message != "It's a tie!"%>
           <button onclick="document.getElementById('my-audio').play()" class="btn green lighten-2 white-text" style="display: none;">
@@ -45,31 +51,48 @@
       <p class="flow-text"><strong>Player <%= @current_player %>'s turn</strong></p>
     <% end %>
     <%= form_with url: game_move_path, method: :post, local: true do %>
-      <div class="row">
-        <% @board.each_slice(3).with_index do |row, row_idx| %>
-          <div class="col s12">
-            <% row.each_with_index do |cell, col_idx| %>
-              <% index = row_idx * 3 + col_idx %>
-              <% if cell.present? || session[:game_over] %>
-                <button class="btn-large grey lighten-3 black-text z-depth-1" disabled style="width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;">
-                  <%= cell %>
-                </button>
-              <% else %>
-                <button type="submit" name="cell" value="<%= index %>" class="btn-large teal white-text z-depth-3" style="width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;">
-                  &nbsp;
-                </button>
-              <% end %>
-            <% end %>
-          </div>
+      <div style="position: relative; width: 306px; height: 306px; margin: auto; background: white;">
+        <%# Horizontal lines %>
+        <div style="position: absolute; top: 102px; left: 0; width: 100%; height: 2px; background: black;"></div>
+        <div style="position: absolute; top: 204px; left: 0; width: 100%; height: 2px; background: black;"></div>
+        <%# Vertical lines %>
+        <div style="position: absolute; left: 102px; top: 0; height: 100%; width: 2px; background: black;"></div>
+        <div style="position: absolute; left: 204px; top: 0; height: 100%; width: 2px; background: black;"></div>
+        <% 9.times do |index| %>
+          <% row = index / 3 %>
+          <% col = index % 3 %>
+          <% top = row * 102 %>
+          <% left = col * 102 %>
+          <% cell = @board[index] %>
+          <% disabled = cell.present? || session[:game_over] %>
+          <% btn_style = "position: absolute; top: #{top}px; left: #{left}px; width: 100px; height: 100px; color: black; font-size: 32px; border: none; background: none;" %>
+          <% if disabled %>
+            <%# class="z-depth-3" %>
+            <button disabled style="<%= btn_style %>">
+              <%= cell %>
+            </button>
+          <% else %>
+            <button type="submit"
+                name="cell"
+                value="<%= index %>"
+                style="<%= btn_style %>; cursor: pointer;">
+              &nbsp;
+            </button>
+          <% end %>
         <% end %>
       </div>
     <% end %>
-    <div class="section" style="margin-top: 20px;">
-      <%= button_to '🧹 Reset Game', reset_game_path,
-                method: :post,
-                class: 'btn-flat red-text text-darken-2 waves-effect',
-                form: { style: 'display: inline' },
-                style: 'border: 2px solid #ef5350; border-radius: 8px;' %>
+    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 35px;">
+      <%= button_to root_path, method: :get, class: 'btn-back btn waves-effect waves-light blue darken-2 white-text', form: { style: 'display: inline' } do %>
+        <span style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; font-weight: bold;">
+          く&nbsp;Back
+        </span>
+      <% end %>
+      <%= button_to reset_game_path, method: :post, class: 'btn-reset-game btn waves-effect waves-light red lighten-2 white-text', form: { style: 'display: inline' } do %>
+        <span style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; font-weight: bold;">
+          ↺&nbsp;Reset Game
+        </span>
+      <% end %>
     </div>
   </div>
   <!-- Background animation layer -->
@@ -118,6 +141,22 @@
         transform: translateY(-120vh) scale(1.2) rotate(360deg);
         opacity: 0;
       }
+    }
+
+    .btn-reset-game {
+        border-radius: 12px;
+        padding: 8px 20px;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(239, 83, 80, 0.4);
+        transition: background 0.3s ease;
+    }
+
+    .btn-back {
+        border-radius: 12px;
+        padding: 8px 20px;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(80, 149, 239, 0.4);
+        transition: background 0.3s ease;
     }
   </style>
 </div>
