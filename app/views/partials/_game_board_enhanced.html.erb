@@ -1,20 +1,22 @@
-<%= form_with url: game_move_path, method: :post, local: true do %>
-  <div class="row">
-    <% @board.each_slice(3).with_index do |row, row_idx| %>
-      <div class="col s12">
-        <% row.each_with_index do |cell, col_idx| %>
-          <% index = row_idx * 3 + col_idx %>
-          <% if cell.present? || session[:game_over] %>
-            <button class="btn-large grey lighten-3 black-text z-depth-1" disabled style="width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;">
-              <%= cell %>
-            </button>
-          <% else %>
-            <button type="submit" name="cell" value="<%= index %>" class="btn-large teal white-text z-depth-3" style="width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;">
-              &nbsp;
-            </button>
+<div id="form-enhanced-view" style="display: none;">
+  <%= form_with url: game_move_path, method: :post, local: true do %>
+    <div class="row">
+      <% @board.each_slice(3).with_index do |row, row_idx| %>
+        <div class="col s12">
+          <% row.each_with_index do |cell, col_idx| %>
+            <% index = row_idx * 3 + col_idx %>
+            <% if cell.present? || session[:game_over] %>
+              <button class="btn-large grey lighten-3 black-text z-depth-1" disabled style="width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;">
+                <%= cell %>
+              </button>
+            <% else %>
+              <button type="submit" name="cell" value="<%= index %>" class="btn-large teal white-text z-depth-3" style="width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;">
+                &nbsp;
+              </button>
+            <% end %>
           <% end %>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
-<% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

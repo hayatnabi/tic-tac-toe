@@ -1,5 +1,5 @@
 <div style="height: 100vh; display: flex; align-items: center; justify-content: center;">
-  <div class="card z-depth-4" style="padding: 30px; max-width: 450px; width: 100%; text-align: center; border-radius: 16px; box-shadow: 0 0 25px rgba(0, 150, 136, 0.7);">
+  <div class="card z-depth-4" style="padding: 30px; max-width: 750px; max-height: 895px; width: 100%; text-align: center; border-radius: 16px; box-shadow: 0 0 25px rgba(0, 150, 136, 0.7);">
     <div class="center-align" style="margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 15px;">
       <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg"
        alt="Pakistani Flag"
@@ -64,6 +64,47 @@
         </span>
       <% end %>
     </div>
+    <div class="switch" style="margin-top: 20px;">
+      <label>
+        <input type="checkbox" id="game-board-toggle-id">
+        <span class="lever"></span>
+        Enable Enhanced View
+      </label>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('game-board-toggle-id');
+        const standardForm = document.getElementById('form-classic-view');
+        const enhancedForm = document.getElementById('form-enhanced-view');
+
+        // Check localStorage (or default to false)
+        const isEnhanced = localStorage.getItem('enhancedView') === 'true';
+
+        // Show the correct form immediately
+        if (isEnhanced) {
+          enhancedForm.style.display = 'block';
+          standardForm.style.display = 'none';
+          toggle.checked = true;
+        } else {
+          standardForm.style.display = 'block';
+          enhancedForm.style.display = 'none';
+          toggle.checked = false;
+        }
+
+        // Toggle handler
+        toggle.addEventListener('change', function () {
+          if (toggle.checked) {
+            localStorage.setItem('enhancedView', 'true');
+            standardForm.style.display = 'none';
+            enhancedForm.style.display = 'block';
+          } else {
+            localStorage.setItem('enhancedView', 'false');
+            standardForm.style.display = 'block';
+            enhancedForm.style.display = 'none';
+          }
+        });
+      });
+    </script>
   </div>
   <!-- Background animation layer -->
   <div id="xo-background">
