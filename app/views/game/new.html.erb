@@ -48,29 +48,17 @@
         <audio id="my-audio" src="/audio/game_over_115s.mp3" style="display: none;"></audio>
       </div>
     <% else %>
-      <p class="flow-text"><strong>Player <%= @current_player %>'s turn</strong></p>
+      <%# <p class="flow-text"><strong>Player <%= @current_player %>
     <% end %>
-    <%= render "partials/game_board_enhanced" %>
+    <%# <%= render "partials/game_board_enhanced" %>
     <%= render "partials/game_board_classic" %>
-    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 35px;">
-      <%= button_to root_path, method: :get, class: 'btn-back btn waves-effect waves-light blue darken-2 white-text', form: { style: 'display: inline' } do %>
-        <span style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; font-weight: bold;">
-          く&nbsp;Back
-        </span>
-      <% end %>
-      <%= button_to reset_game_path, method: :post, class: 'btn-reset-game btn waves-effect waves-light red lighten-2 white-text', form: { style: 'display: inline' } do %>
-        <span style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; font-weight: bold;">
-          ↺&nbsp;Reset Game
-        </span>
-      <% end %>
-    </div>
-    <div class="switch" style="margin-top: 20px;">
+    <%# <div class="switch" style="margin-top: 20px;">
       <label>
         <input type="checkbox" id="game-board-toggle-id">
         <span class="lever"></span>
         Enable Enhanced View
       </label>
-    </div>
+    </div> %>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         const toggle = document.getElementById('game-board-toggle-id');

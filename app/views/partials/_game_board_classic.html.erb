@@ -1,33 +1,177 @@
-<div id="form-classic-view">
-  <%= form_with url: game_move_path, method: :post, local: true do %>
-    <div style="position: relative; width: 450px; height: 450px; margin: auto; background: white;">
-      <%# Horizontal lines %>
-      <div style="position: absolute; top: 150px; left: 0; width: 100%; height: 3px; background: black;"></div>
-      <div style="position: absolute; top: 300px; left: 0; width: 100%; height: 3px; background: black;"></div>
-      <%# Vertical lines %>
-      <div style="position: absolute; left: 150px; top: 0; height: 100%; width: 3px; background: black;"></div>
-      <div style="position: absolute; left: 300px; top: 0; height: 100%; width: 3px; background: black;"></div>
-      <% 9.times do |index| %>
-        <% row = index / 3 %>
-        <% col = index % 3 %>
-        <% top = row * 150 %>
-        <% left = col * 150 %>
-        <% cell = @board[index] %>
-        <% disabled = cell.present? || session[:game_over] %>
-        <% btn_style = "position: absolute; top: #{top}px; left: #{left}px; width: 150px; height: 150px; color: black; font-size: 48px; border: none; background: none;" %>
-        <% if disabled %>
-          <button disabled style="<%= btn_style %>">
-            <%= cell %>
-          </button>
-        <% else %>
-          <button type="submit"
-                  name="cell"
-                  value="<%= index %>"
-                  style="<%= btn_style %>; cursor: pointer;">
-            &nbsp;
-          </button>
-        <% end %>
-      <% end %>
-    </div>
-  <% end %>
+<style>
+  #board {
+    position: relative;
+    width: 450px;
+    height: 450px;
+    margin: 40px auto;
+    background: white;
+  }
+  /* Grid lines */
+  .line-horizontal {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: black;
+    z-index: 10; /* lines above backgrounds */
+  }
+  .line-1 { top: 150px; }
+  .line-2 { top: 300px; }
+
+  .line-vertical {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: black;
+    z-index: 10;
+  }
+  .line-v1 { left: 150px; }
+  .line-v2 { left: 300px; }
+
+  /* Transparent buttons over each cell */
+  button.cell {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border: none;
+    background: none;
+    font-size: 72px;
+    color: black;
+    cursor: pointer;
+    user-select: none;
+    padding: 8px;  /* margin to keep background inside lines */
+    box-sizing: border-box;
+    transition: background-color 0.3s ease;
+    z-index: 5; /* below lines */
+  }
+  button.cell:hover:enabled {
+    background-color: #eee; /* light grey on hover */
+  }
+  button.cell.selected {
+    /* #d4f4dd */
+    background-color: rgb(255, 253, 221); /* lighter green when selected */
+  }
+  button.cell.winning-cell {
+    background-color: #a8e6a3 !important; /* stronger light green for win */
+  }
+  button.cell:disabled {
+    cursor: default;
+    color: black;
+  }
+</style>
+<div style="text-align:center; margin-top:20px; font-size: 1.5rem; font-weight: bold;" id="status">
+  Player I's turn
 </div>
+<div id="board">
+  <!-- Horizontal lines -->
+  <div class="line-horizontal line-1"></div>
+  <div class="line-horizontal line-2"></div>
+  <!-- Vertical lines -->
+  <div class="line-vertical line-v1"></div>
+  <div class="line-vertical line-v2"></div>
+</div>
+<div style="display: flex; gap: 10px; justify-content: center; margin-top: 35px;">
+  <%= button_to root_path, method: :get, class: 'btn-back btn waves-effect waves-light blue darken-2 white-text', form: { style: 'display: inline' } do %>
+    <span style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; font-weight: bold; text-transform: none;">
+      く&nbsp;Back
+    </span>
+  <% end %>
+  <div style="text-align:center;">
+    <button id="reset-btn"
+          class="btn waves-effect waves-light red lighten-2 white-text"
+          style="font-size: 1rem; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; padding: 10px 24px; text-transform: none;">
+      ↺&nbsp;Reset Game
+    </button>
+  </div>
+</div>
+<script>
+  (() => {
+    const board = document.getElementById('board');
+    const status = document.getElementById('status');
+    const resetBtn = document.getElementById('reset-btn');
+
+    let currentPlayer = 'I';
+    let gameActive = true;
+    let gameState = Array(9).fill(null);
+
+    // Create buttons dynamically and position them
+    for (let i = 0; i < 9; i++) {
+      const btn = document.createElement('button');
+      btn.classList.add('cell');
+      const row = Math.floor(i / 3);
+      const col = i % 3;
+      btn.style.top = `${row * 150}px`;
+      btn.style.left = `${col * 150}px`;
+      btn.dataset.index = i;
+      btn.addEventListener('click', onCellClick);
+      board.appendChild(btn);
+    }
+
+    function checkWin() {
+      const winningLines = [
+        [0,1,2],[3,4,5],[6,7,8],  // rows
+        [0,3,6],[1,4,7],[2,5,8],  // columns
+        [0,4,8],[2,4,6]           // diagonals
+      ];
+      for (const line of winningLines) {
+        const [a,b,c] = line;
+        if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
+          return line; // return winning line indices
+        }
+      }
+      return null;
+    }
+
+    function onCellClick(e) {
+      const btn = e.target;
+      const index = parseInt(btn.dataset.index);
+      if (!gameActive || gameState[index]) return;
+
+      gameState[index] = currentPlayer;
+      btn.textContent = currentPlayer;
+      btn.disabled = true;
+      btn.classList.add('selected');
+
+      const winningLine = checkWin();
+      if (winningLine) {
+        status.textContent = `Player ${currentPlayer} wins!`;
+        gameActive = false;
+
+        // Highlight winning cells
+        winningLine.forEach(i => {
+          const winningBtn = document.querySelector(`button.cell[data-index="${i}"]`);
+          if (winningBtn) {
+            winningBtn.classList.add('winning-cell');
+          }
+        });
+        return;
+      }
+
+      if (gameState.every(cell => cell !== null)) {
+        status.textContent = "It's a draw!";
+        gameActive = false;
+        return;
+      }
+
+      currentPlayer = currentPlayer === 'I' ? 'P' : 'I';
+      status.textContent = `Player ${currentPlayer}'s turn`;
+    }
+
+    function resetGame() {
+      gameState.fill(null);
+      currentPlayer = 'I';
+      gameActive = true;
+      status.textContent = `Player ${currentPlayer}'s turn`;
+
+      // Enable and clear buttons and remove highlights
+      document.querySelectorAll('button.cell').forEach(btn => {
+        btn.disabled = false;
+        btn.textContent = '';
+        btn.classList.remove('selected', 'winning-cell');
+      });
+    }
+
+    resetBtn.addEventListener('click', resetGame);
+  })();
+</script>
