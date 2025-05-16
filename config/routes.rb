@@ -6,8 +6,6 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   get "game", to: "game#new"
-  post "game/move", to: "game#move"
-  post "game/reset", to: "game#reset", as: "reset_game"
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
