@@ -1,22 +1,104 @@
 <div id="form-enhanced-view" style="display: none;">
-  <%= form_with url: game_move_path, method: :post, local: true do %>
-    <div class="row">
-      <% @board.each_slice(3).with_index do |row, row_idx| %>
-        <div class="col s12">
-          <% row.each_with_index do |cell, col_idx| %>
-            <% index = row_idx * 3 + col_idx %>
-            <% if cell.present? || session[:game_over] %>
-              <button class="btn-large grey lighten-3 black-text z-depth-1" disabled style="width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;">
-                <%= cell %>
-              </button>
-            <% else %>
-              <button type="submit" name="cell" value="<%= index %>" class="btn-large teal white-text z-depth-3" style="width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;">
-                &nbsp;
-              </button>
-            <% end %>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+  <div class="row" id="enhanced-board">
+    <!-- JS will generate buttons here -->
+  </div>
 </div>
+<script>
+  (() => {
+    const enhancedBoard = document.getElementById('enhanced-board');
+    const CELL_COUNT = 9;
+    const gameState = Array(CELL_COUNT).fill(null);
+    let currentPlayer = 'I';
+    let gameActive = true;
+
+    const WIN_COMBOS = [
+      [0,1,2], [3,4,5], [6,7,8],
+      [0,3,6], [1,4,7], [2,5,8],
+      [0,4,8], [2,4,6]
+    ];
+
+    function checkWinner() {
+      for (const [a, b, c] of WIN_COMBOS) {
+        if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
+          return [a, b, c];
+        }
+      }
+      return null;
+    }
+
+    function switchPlayer() {
+      currentPlayer = currentPlayer === 'I' ? 'P' : 'I';
+    }
+
+    function updateStatus(message) {
+      const status = document.getElementById('status');
+      if (status) status.textContent = message;
+    }
+
+    function handleClick(e) {
+      const btn = e.target;
+      const index = parseInt(btn.dataset.index);
+      if (!gameActive || gameState[index]) return;
+
+      gameState[index] = currentPlayer;
+      btn.textContent = currentPlayer;
+      btn.disabled = true;
+      btn.classList.remove('teal', 'white-text');
+      btn.classList.add('grey', 'lighten-3', 'black-text', 'z-depth-1');
+
+      const winLine = checkWinner();
+      if (winLine) {
+        winLine.forEach(i => {
+          const winBtn = document.querySelector(`button[data-index='${i}']`);
+          winBtn.classList.add('green', 'lighten-3');
+        });
+        updateStatus(`${currentPlayer === 'I' ? "India" : "Pakistan"} wins!`);
+        gameActive = false;
+        return;
+      }
+
+      if (gameState.every(cell => cell !== null)) {
+        updateStatus("It's a draw!");
+        gameActive = false;
+        return;
+      }
+
+      switchPlayer();
+      updateStatus(`${currentPlayer === 'I' ? "India's" : "Pakistan's"} turn`);
+    }
+
+    // Generate grid
+    for (let row = 0; row < 3; row++) {
+      const rowDiv = document.createElement('div');
+      rowDiv.classList.add('col', 's12');
+
+      for (let col = 0; col < 3; col++) {
+        const index = row * 3 + col;
+        const btn = document.createElement('button');
+        btn.className = 'btn-large teal white-text z-depth-3';
+        btn.style.cssText = 'width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;';
+        btn.dataset.index = index;
+        btn.addEventListener('click', handleClick);
+        btn.innerHTML = '&nbsp;';
+        rowDiv.appendChild(btn);
+      }
+
+      enhancedBoard.appendChild(rowDiv);
+    }
+
+    // Expose a reset function if needed
+    window.resetEnhancedGame = function () {
+      gameState.fill(null);
+      currentPlayer = 'I';
+      gameActive = true;
+      updateStatus(`India's turn`);
+
+      document.querySelectorAll('#enhanced-board button').forEach(btn => {
+        btn.disabled = false;
+        btn.textContent = '';
+        btn.className = 'btn-large teal white-text z-depth-3';
+        btn.style.cssText = 'width: 80px; height: 80px; margin: 5px; font-size: 24px; border-radius: 12px;';
+      });
+    };
+  })();
+</script>
