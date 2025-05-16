@@ -23,16 +23,35 @@
     </button>
   </div>
 </div>
+<!-- Materialize Dropdown for Mode Selection -->
+<div style="display: flex; justify-content: center; margin-top: 30px;">
+  <div class="input-field" style="width: 250px; margin: 0 auto;">
+    <select id="mode-select">
+      <option value="two-player" selected>2 Player</option>
+      <option value="vs-computer">Play with Computer</option>
+    </select>
+    <label for="mode-select" style="font-weight: bold;">Select Mode</label>
+  </div>
+</div>
+<!-- JavaScript to initialize Materialize Select -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const elems = document.querySelectorAll('select');
+    M.FormSelect.init(elems);
+  });
+</script>
 <script>
   (() => {
     const board = document.getElementById('board');
     const status = document.getElementById('status');
     const resetBtn = document.getElementById('reset-btn');
+    const modeSelect = document.getElementById('mode-select');
 
     let currentPlayer = 'I';
     let gameActive = true;
     let message = "";
     let gameState = Array(9).fill(null);
+    let vsComputer = false;
 
     // Create buttons dynamically and position them
     for (let i = 0; i < 9; i++) {
@@ -81,13 +100,9 @@
         }
         status.textContent = message;
         gameActive = false;
-
-        // Highlight winning cells
         winningLine.forEach(i => {
           const winningBtn = document.querySelector(`button.cell[data-index="${i}"]`);
-          if (winningBtn) {
-            winningBtn.classList.add('winning-cell');
-          }
+          if (winningBtn) winningBtn.classList.add('winning-cell');
         });
         return;
       }
@@ -99,11 +114,44 @@
       }
 
       currentPlayer = currentPlayer === 'I' ? 'P' : 'I';
-      if (currentPlayer === 'I') {
-        status.textContent = `India's turn`;
-      } else {
-        status.textContent = `Pakistan's turn`;
+      status.textContent = currentPlayer === 'I' ? "India's turn" : "Pakistan's turn";
+
+      if (vsComputer && currentPlayer === 'P') {
+        setTimeout(makeComputerMove, 500);
       }
+    }
+
+    function makeComputerMove() {
+      if (!gameActive) return;
+      let emptyIndices = gameState.map((val, i) => val === null ? i : null).filter(i => i !== null);
+      if (emptyIndices.length === 0) return;
+      let choice = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+
+      const btn = document.querySelector(`button.cell[data-index="${choice}"]`);
+      gameState[choice] = 'P';
+      btn.textContent = 'P';
+      btn.disabled = true;
+      btn.classList.add('selected');
+
+      const winningLine = checkWin();
+      if (winningLine) {
+        status.textContent = "Pakistan zindabad! 💚 Victory tastes sweet!\nAnother crash landing for India! 💥";
+        gameActive = false;
+        winningLine.forEach(i => {
+          const winningBtn = document.querySelector(`button.cell[data-index="${i}"]`);
+          if (winningBtn) winningBtn.classList.add('winning-cell');
+        });
+        return;
+      }
+
+      if (gameState.every(cell => cell !== null)) {
+        status.textContent = "It's a draw... Even the rivalry took a fantastic tea break ☕️😆";
+        gameActive = false;
+        return;
+      }
+
+      currentPlayer = 'I';
+      status.textContent = "India's turn";
     }
 
     function resetGame() {
@@ -111,8 +159,6 @@
       currentPlayer = 'I';
       gameActive = true;
       status.textContent = `India's turn`;
-
-      // Enable and clear buttons and remove highlights
       document.querySelectorAll('button.cell').forEach(btn => {
         btn.disabled = false;
         btn.textContent = '';
@@ -121,5 +167,9 @@
     }
 
     resetBtn.addEventListener('click', resetGame);
+    modeSelect.addEventListener('change', () => {
+      vsComputer = modeSelect.value === 'vs-computer';
+      resetGame();
+    });
   })();
 </script>
