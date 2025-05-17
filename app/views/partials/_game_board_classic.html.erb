@@ -1,4 +1,4 @@
-<div style="text-align:center; margin-top:20px; font-size: 1.5rem; font-weight: bold; white-space: pre-line;" id="status">
+<div style="text-align:center; margin-top:20px; font-size: 1rem; font-weight: bold; white-space: pre-line;" id="status">
   India's turn
 </div>
 <div id="board">
@@ -84,8 +84,10 @@
       if (winningLine) {
         if (currentPlayer == "P") {
           message = "Pakistan zindabad! 💚 Victory tastes sweet!\nAnother crash landing for India! 💥"
+          handleGameEnd('P')
         } else {
           message = "Well played 🤡 but the green side wins as 'RAWFAILED' 😭🤭😄"
+          handleGameEnd('I')
         }
         status.textContent = message;
         gameActive = false;
@@ -98,6 +100,7 @@
 
       if (gameState.every(cell => cell !== null)) {
         status.textContent = "It's a draw... Even the rivalry took a fantastic tea break ☕️😆";
+        handleGameEnd('')
         gameActive = false;
         return;
       }
@@ -125,6 +128,7 @@
       const winningLine = checkWin();
       if (winningLine) {
         status.textContent = "Pakistan zindabad! 💚 Victory tastes sweet!\nAnother crash landing for India! 💥";
+        handleGameEnd('P')
         gameActive = false;
         winningLine.forEach(i => {
           const winningBtn = document.querySelector(`button.cell[data-index="${i}"]`);
@@ -135,6 +139,7 @@
 
       if (gameState.every(cell => cell !== null)) {
         status.textContent = "It's a draw... Even the rivalry took a fantastic tea break ☕️😆";
+        handleGameEnd('')
         gameActive = false;
         return;
       }
@@ -161,4 +166,31 @@
       resetGame();
     });
   })();
+
+  let iWins = <%= session[:i_wins] || 0 %>;
+  let pWins = <%= session[:p_wins] || 0 %>;
+  let ties  = <%= session[:ties] || 0 %>;
+
+  function updateScoreboard(x, o, t) {
+    document.getElementById('score-x').textContent = x;
+    document.getElementById('score-o').textContent = o;
+    document.getElementById('score-tie').textContent = t;
+    }
+
+    // Run this after page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      updateScoreboard(iWins, pWins, ties);
+    });
+
+    // Call this function from your game logic
+    function handleGameEnd(winner) {
+      if (winner === 'I') {
+   iWins++;
+      } else if (winner === 'P') {
+   pWins++;
+      } else {
+   ties++;
+      }
+      updateScoreboard(iWins, pWins, ties);
+    }
 </script>

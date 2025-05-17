@@ -92,3 +92,52 @@ button.cell:disabled {
     cursor: default;
     color: black;
 }
+
+#xo-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+}
+
+#xo-background .xo {
+    position: absolute;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.2);
+    top: calc(100% * var(--rand-top));
+    left: calc(100% * var(--rand-left));
+    animation: floatXO 25s linear infinite;
+    animation-delay: calc(-25s * var(--rand-delay));
+}
+
+@keyframes floatXO {
+    0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-120vh) scale(1.2) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.btn-reset-game {
+    border-radius: 12px;
+    padding: 8px 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(239, 83, 80, 0.4);
+    transition: background 0.3s ease;
+}
+
+.btn-back {
+    border-radius: 12px;
+    padding: 8px 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(80, 149, 239, 0.4);
+    transition: background 0.3s ease;
+}

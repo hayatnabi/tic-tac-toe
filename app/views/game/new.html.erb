@@ -1,73 +1,27 @@
 <div style="height: 100vh; display: flex; align-items: center; justify-content: center;">
-  <div class="card z-depth-4" style="padding: 30px; max-width: 750px; max-height: 895px; width: 100%; text-align: center; border-radius: 16px; box-shadow: 0 0 25px rgba(0, 150, 136, 0.7);">
-    <!-- Materialize Dropdown for Mode Selection -->
-    <div style="display: flex; justify-content: center; margin-top: 0px;">
-      <div class="input-field" style="width: 250px; margin: 0 auto;">
+  <div class="card z-depth-4" style="padding: 15px; max-width: 750px; max-height: 745px; width: 100%; margin-top: 20px; text-align: center; border-radius: 16px; box-shadow: 0 0 25px rgba(0, 150, 136, 0.7); position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 1000;">
+    <!-- Horizontal Container -->
+    <div style="display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap;">
+      <!-- Dropdown -->
+      <div class="input-field" style="width: 250px;">
         <select id="mode-select">
           <option value="two-player" selected>2 Players</option>
           <option value="vs-computer">Play with Computer</option>
         </select>
         <label for="mode-select" style="font-weight: bold;">Select Mode</label>
       </div>
-    </div>
-    <div class="center-align" style="margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 15px;">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg"
-       alt="Pakistani Flag"
-       width="50"
-       style="border: 1px solid #ccc; border-radius: 4px;" />
-      <h5 class="teal-text text-darken-3" style="margin: 0;">"PAF vs IAF.....6-Nil" 😎</h5>
-    </div>
-    <% if session[:game_over] %>
-      <div class="card-panel teal lighten-2 white-text" style="padding: 5px; border-radius: 12px;">
-        <% if @message.present? %>
-          <p class="flow-text" style="margin: 0;">
-            <strong><%= @message %></strong>
-          </p>
-        <% end %>
-        <%# <% else %>
-        <p class="flow-text" style="margin: 0;">
-          <strong>Game Over!</strong>
-        </p>
-        <div class="section" style="margin-top: 10px;">
-          <div style="display: flex; justify-content: center;">
-            <div class="center-align">
-              <%= button_to reset_game_path,
-                method: :post,
-                class: 'btn white teal-text text-darken-3 waves-effect z-depth-1',
-                form: { style: 'display: inline' },
-                style: 'border: 2px solid white; border-radius: 12px; padding: 10px 20px; font-weight: normal; display: flex; align-items: center; justify-content: center;' do %>
-                ▷&nbsp;Play Again
-              <% end %>
-            </div>
-          </div>
-        </div>
-        <% if @message != "It's a tie!"%>
-          <button onclick="document.getElementById('my-audio').play()" class="btn green lighten-2 white-text" style="display: none;">
-            📢 Listen PAK Victory? Click me!
-          </button>
-        <% end %>
-        <!-- Game Over Sound -->
-        <%# <audio controls>
-          <source src="/audio/game_over3_trimmed.mp3" type="audio/mpeg">
-          Your browser does not support the audio element.
-        </audio> %>
-        <script>
-          document.getElementById('my-audio').play()
-        </script>
-        <audio id="my-audio" src="/audio/game_over_115s.mp3" style="display: none;"></audio>
+      <!-- Flag and Text -->
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg"
+         alt="Pakistani Flag"
+         width="50"
+         style="border: 1px solid #ccc; border-radius: 4px;" />
+        <h6 class="teal-text text-darken-3" style="margin: 0;">"PAF vs IAF.....6-Nil" 😎</h6>
       </div>
-    <% else %>
-      <%# <p class="flow-text"><strong>Player <%= @current_player %>
-    <% end %>
+    </div>
     <%# <%= render "partials/game_board_enhanced" %>
     <%= render "partials/game_board_classic" %>
-    <%# <div class="switch" style="margin-top: 20px;">
-      <label>
-        <input type="checkbox" id="game-board-toggle-id">
-        <span class="lever"></span>
-        Enable Enhanced View
-      </label>
-    </div> %>
+    <%= render "partials/scoreboard" %>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         const toggle = document.getElementById('game-board-toggle-id');
@@ -119,52 +73,4 @@
     "><%= char %></span>
     <% end %>
   </div>
-  <style>
-    #xo-background {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    #xo-background .xo {
-      position: absolute;
-      font-weight: bold;
-      color: rgba(0, 0, 0, 0.2);
-      top: calc(100% * var(--rand-top));
-      left: calc(100% * var(--rand-left));
-      animation: floatXO 25s linear infinite;
-      animation-delay: calc(-25s * var(--rand-delay));
-    }
-
-    @keyframes floatXO {
-      0% {
-        transform: translateY(0) scale(1) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-120vh) scale(1.2) rotate(360deg);
-        opacity: 0;
-      }
-    }
-
-    .btn-reset-game {
-        border-radius: 12px;
-        padding: 8px 20px;
-        font-weight: bold;
-        box-shadow: 0 4px 10px rgba(239, 83, 80, 0.4);
-        transition: background 0.3s ease;
-    }
-
-    .btn-back {
-        border-radius: 12px;
-        padding: 8px 20px;
-        font-weight: bold;
-        box-shadow: 0 4px 10px rgba(80, 149, 239, 0.4);
-        transition: background 0.3s ease;
-    }
-  </style>
 </div>
