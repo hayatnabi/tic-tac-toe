@@ -12,8 +12,8 @@ class PagesController < ApplicationController
   # def rules
   # end
 
-  # def how_to_play
-  # end
+  def how_to_play
+  end
 
   # def privacy_policy
   # end

@@ -70,7 +70,6 @@
       }
       return null;
     }
-
     function onCellClick(e) {
       const btn = e.target;
       const index = parseInt(btn.dataset.index);
@@ -86,7 +85,7 @@
         if (currentPlayer == "P") {
           message = "Pakistan zindabad! 💚 Victory tastes sweet!\nAnother crash landing for India! 💥"
         } else {
-          message = "Well played, 🤡 but the green side wins as 'RAFAILED' 😭🤭😄"
+          message = "Well played 🤡 but the green side wins as 'RAWFAILED' 😭🤭😄"
         }
         status.textContent = message;
         gameActive = false;
@@ -107,7 +106,7 @@
       status.textContent = currentPlayer === 'I' ? "India's turn" : "Pakistan's turn";
 
       if (vsComputer && currentPlayer === 'P') {
-        setTimeout(makeComputerMove, 500);
+        setTimeout(makeComputerMove, 100);
       }
     }
 

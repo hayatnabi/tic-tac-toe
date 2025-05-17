@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   get "game", to: "game#new"
 
   get "play_with_computer", to: "game#play_with_computer", as: "play_with_computer"
+  get "how_to_play", to: "pages#how_to_play", as: "how_to_play"
   post "game/move", to: "game#move", as: "game_move"
   post "game/reset", to: "game#reset", as: "reset_game"
 

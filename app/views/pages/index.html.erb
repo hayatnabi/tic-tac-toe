@@ -12,17 +12,7 @@
   </div>
   <div class="section">
     <%= link_to 'Start Game', game_path, class: 'btn waves-effect waves-light blue darken-2' %>
-    <!-- Modal Trigger -->
-    <a class="waves-effect waves-light btn modal-trigger" href="#modelHowToPlay">How to Play</a>
-    <!-- Modal Structure -->
-    <div id="modelHowToPlay" class="modal">
-      <div class="modal-content">
-        <%= render 'partials/game_rules'%>
-      </div>
-      <div class="modal-footer">
-        <a class="modal-close waves-effect waves-green btn-flat">I UNDERSTOOD</a>
-      </div>
-    </div>
+    <%= link_to 'How to Play', how_to_play_path, class: 'waves-effect waves-light btn' %>
   </div>
 </div>
 <!-- JavaScript to initialize the modal -->
@@ -32,5 +22,4 @@
     M.Modal.init(modals);
   });
 </script>
-<%# <%= render 'partials/about_us'%>
 <%= render 'partials/footer'%>
