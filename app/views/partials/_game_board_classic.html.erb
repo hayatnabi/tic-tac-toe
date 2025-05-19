@@ -23,13 +23,6 @@
     </button>
   </div>
 </div>
-<!-- JavaScript to initialize Materialize Select -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const elems = document.querySelectorAll('select');
-    M.FormSelect.init(elems);
-  });
-</script>
 <script>
   (() => {
     const board = document.getElementById('board');
@@ -175,22 +168,22 @@
     document.getElementById('score-x').textContent = x;
     document.getElementById('score-o').textContent = o;
     document.getElementById('score-tie').textContent = t;
-    }
+  }
 
-    // Run this after page loads
-    document.addEventListener('DOMContentLoaded', () => {
-      updateScoreboard(iWins, pWins, ties);
-    });
+  // Run this after page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    updateScoreboard(iWins, pWins, ties);
+  });
 
-    // Call this function from your game logic
-    function handleGameEnd(winner) {
-      if (winner === 'I') {
-   iWins++;
-      } else if (winner === 'P') {
-   pWins++;
-      } else {
-   ties++;
-      }
-      updateScoreboard(iWins, pWins, ties);
+  // Call this function from your game logic
+  function handleGameEnd(winner) {
+    if (winner === 'I') {
+      iWins++;
+    } else if (winner === 'P') {
+      pWins++;
+    } else {
+      ties++;
     }
+    updateScoreboard(iWins, pWins, ties);
+  }
 </script>

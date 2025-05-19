@@ -6,6 +6,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- Your init script for selection view-->
+    <!-- JS to initialize Materialize Select -->
+    <script>
+      document.addEventListener('turbo:load', function () {
+        const selects = document.querySelectorAll('select');
+
+         // Clean up previously injected dropdowns by Materialize
+        document.querySelectorAll('.select-dropdown').forEach(dropdown => dropdown.remove());
+        document.querySelectorAll('input.select-dropdown').forEach(input => input.remove());
+
+        M.FormSelect.init(selects);
+      });
+    </script>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
