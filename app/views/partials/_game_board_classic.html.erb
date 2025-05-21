@@ -29,6 +29,7 @@
     const pMove = new Audio("/audio/p_move.mp3");
     const winSound = new Audio("/audio/win_sound.mp3");
     const drawSound = new Audio("/audio/draw_sound.mp3");
+    const pak_victory = new Audio("/audio/game_over_115s.mp3");
 
     const board = document.getElementById('board');
     const status = document.getElementById('status');
@@ -83,10 +84,16 @@
         if (currentPlayer == "P") {
           message = "Pakistan zindabad! 💚 Victory tastes sweet!\nAnother crash landing for India! 💥"
           winSound.play();
+          winSound.addEventListener("ended", () => {
+            pak_victory.play();
+          });
           handleGameEnd('P')
         } else {
           message = "Well played 🤡 but the green side wins as 'RAWFAILED' 😭🤭😄"
           drawSound.play();
+          drawSound.addEventListener("ended", () => {
+            pak_victory.play();
+          });
           handleGameEnd('I')
         }
         status.textContent = message;
@@ -138,6 +145,9 @@
       if (winningLine) {
         status.textContent = "Pakistan zindabad! 💚 Victory tastes sweet!\nAnother crash landing for India! 💥";
         winSound.play();
+        winSound.addEventListener("ended", () => {
+          pak_victory.play();
+        });
         handleGameEnd('P')
         gameActive = false;
         winningLine.forEach(i => {
@@ -163,6 +173,8 @@
       gameState.fill(null);
       currentPlayer = 'I';
       gameActive = true;
+      pak_victory.pause();
+      pak_victory.currentTime = 0;
       status.textContent = `India's turn`;
       document.querySelectorAll('button.cell').forEach(btn => {
         btn.disabled = false;
