@@ -25,6 +25,11 @@
 </div>
 <script>
   (() => {
+    const iMove = new Audio("/audio/i_move.mp3");
+    const pMove = new Audio("/audio/p_move.mp3");
+    const winSound = new Audio("/audio/win_sound.mp3");
+    const drawSound = new Audio("/audio/draw_sound.mp3");
+
     const board = document.getElementById('board');
     const status = document.getElementById('status');
     const resetBtn = document.getElementById('reset-btn');
@@ -77,9 +82,11 @@
       if (winningLine) {
         if (currentPlayer == "P") {
           message = "Pakistan zindabad! 💚 Victory tastes sweet!\nAnother crash landing for India! 💥"
+          winSound.play();
           handleGameEnd('P')
         } else {
           message = "Well played 🤡 but the green side wins as 'RAWFAILED' 😭🤭😄"
+          drawSound.play();
           handleGameEnd('I')
         }
         status.textContent = message;
@@ -93,6 +100,7 @@
 
       if (gameState.every(cell => cell !== null)) {
         status.textContent = "It's a draw... Even the rivalry took a fantastic tea break ☕️😆";
+        drawSound.play();
         handleGameEnd('')
         gameActive = false;
         return;
@@ -101,10 +109,7 @@
       currentPlayer = currentPlayer === 'I' ? 'P' : 'I';
       status.textContent = currentPlayer === 'I' ? "India's turn" : "Pakistan's turn";
 
-      const iMove = new Audio("/audio/i_move.mp3");
-      const pMove = new Audio("/audio/p_move.mp3");
-
-      if (currentPlayer === 'I') {
+      if (currentPlayer === 'P') {
         // Playing a sound for player 1 move
         iMove.play();
       } else {
@@ -132,6 +137,7 @@
       const winningLine = checkWin();
       if (winningLine) {
         status.textContent = "Pakistan zindabad! 💚 Victory tastes sweet!\nAnother crash landing for India! 💥";
+        winSound.play();
         handleGameEnd('P')
         gameActive = false;
         winningLine.forEach(i => {
@@ -143,6 +149,7 @@
 
       if (gameState.every(cell => cell !== null)) {
         status.textContent = "It's a draw... Even the rivalry took a fantastic tea break ☕️😆";
+        drawSound.play();
         handleGameEnd('')
         gameActive = false;
         return;
