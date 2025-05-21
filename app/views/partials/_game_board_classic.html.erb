@@ -101,6 +101,17 @@
       currentPlayer = currentPlayer === 'I' ? 'P' : 'I';
       status.textContent = currentPlayer === 'I' ? "India's turn" : "Pakistan's turn";
 
+      const iMove = new Audio("/audio/i_move.mp3");
+      const pMove = new Audio("/audio/p_move.mp3");
+
+      if (currentPlayer === 'I') {
+        // Playing a sound for player 1 move
+        iMove.play();
+      } else {
+        // Playing a sound for player 2 move
+        pMove.play();
+      }
+
       if (vsComputer && currentPlayer === 'P') {
         setTimeout(makeComputerMove, 100);
       }
